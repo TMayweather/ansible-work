@@ -1,0 +1,36 @@
+---
+- name: Install Arch packages
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Install Arch packages on fresh OS
+      community.general.pacman:
+        name: base-devel,git,github-cli,code,chezmoi,alacritty,
+          starship,neovim,micro,qtile,rofi,feh,picom,conky,ansible,dagger,
+          docker,kubectl,k9s,helm,kustomize,terraform,openssh,firefox,chromium,age,
+          obsidian,imagemagick,zsh,zsh-completions,zsh-autosuggestions,zsh-syntax-highlighting,
+          lxsession,ripgrep,thunar,yamllint,fzf,dunst,tree,bat,man-pages,man-db
+
+    - name: Install Homebrew
+      community.general.homebrew:
+        state: present
+
+    - name: Add Linuxbrew configuration to .zshrc
+      ansible.builtin.blockinfile:
+        path: "/home/lowkey/.zshrc"
+        block: |
+          test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+          test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> "/home/lowkey/.zshrc"
+
+
+    - name: Clone Chezmoi repo
+      ansible.builtin.git:
+        repo: https://github.com/TMayweather/dotfiles.git
+        dest: ~/dotfiles
+        single_branch: true
+        version: main
+      environment:
+        GIT_SSH_COMMAND: "ssh -o ForwardAgent=yes"

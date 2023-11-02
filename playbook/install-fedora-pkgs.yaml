@@ -1,0 +1,54 @@
+- name: Install Fedora packages
+  hosts: localhost
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Install fedora packages
+      ansible.builtin.dnf:
+        name: zsh,fzf,ripgrep,xrandr,timeshift,shutter,playerctl,code,ansible,terraform,base-devel,github-cli,
+          alacritty,starship,neovim,vim,micro,rofi,feh,docker-ce,docker-ce-cli,docker-compose,kubectl,k9s,helm,
+          kustomize,openssh,firefox,chromium,age,obsidian,imagemagick,lxsession,lxappearance,ffmpeg,thunar,yamllint,
+          fzf,dunst,tree,bat
+
+    - name: Install Homebrew
+      ansible.builtin.shell: "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Add Linuxbrew configuration to .zshrc
+      ansible.builtin.blockinfile:
+        path: ~/.zshrc
+        block: |
+          test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+          test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zshrc
+
+    - name: Install COPR
+      ansible.builtin.dnf:
+        name: dnf-plugins-core
+        state: present
+
+    - name: Enable QTile Copr Repo
+      community.general.copr:
+        name: frostyx/qtile
+        state: enabled
+
+    - name: Install QTile
+      ansible.builtin.dnf:
+        name: qtile, qtile-extras
+
+    - name: Install Chezmoi
+      community.general.homebrew:
+        name: chezmoi
+        state: present
+
+    - name: Git clone Chezmoi dotfiles
+      ansible.builtin.git:
+        repo: https://github.com/TMayweather/dotfiles.git
+        dest: ~/dotfiles
+        single_branch: true
+        version: main
+      environment:
+        GIT_SSH_COMMAND: "ssh -o ForwardAgent=yes"
