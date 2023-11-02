@@ -9,7 +9,7 @@
         name: zsh,fzf,ripgrep,xrandr,timeshift,shutter,playerctl,code,ansible,terraform,base-devel,github-cli,
           alacritty,starship,neovim,vim,micro,rofi,feh,docker-ce,docker-ce-cli,docker-compose,kubectl,k9s,helm,
           kustomize,openssh,firefox,chromium,age,obsidian,imagemagick,lxsession,lxappearance,ffmpeg,thunar,yamllint,
-          fzf,dunst,tree,bat
+          fzf,dunst,tree,bat,numlockx,betterlockscreen
 
     - name: Install Homebrew
       ansible.builtin.shell: "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
