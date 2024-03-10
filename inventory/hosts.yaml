@@ -2,7 +2,10 @@
 all:
   hosts:
     artemis:
-      ansible_host: 192.168.1.85
-      ansible_user: lowkey
+      ansible_host: localhost
+      ansible_user: tnea
+    # maximus:
+    #   ansible_host: 192.168.1.18
+    #   ansible_user: tmayweather
 
 
